@@ -1081,6 +1081,40 @@ Entonces, cuando usas la combinación de callonceen a Background, puedes obtener
 
 A calloncese utiliza idealmente sólo para JSON "puro". Es posible que tenga problemas si intenta mezclar funciones JS o código Java. Ver karate.callSingle().
 
+Feature: karate answers 2
+
+Background:
+  * url 'http://localhost:8080'
+
+Scenario Outline: given circuit name, validate country
+  Given path 'api/f1/circuits/<name>.json'
+  When method get
+  Then match $.MRData.CircuitTable.Circuits[0].Location.country == '<country>'
+
+ Scenario Outline: given race number, validate number of pitstops for Max Verstappen in 2015
+  Given path 'api/f1/2015/<race>/drivers/max_verstappen/pitstops.json'
+  When method get
+  Then assert response.MRData.RaceTable.Races[0].PitStops.length == <stops>
+
+  Examples:
+    | race | stops |
+    | 1    | 1     |
+    | 2    | 3     |
+    | 3    | 2     |
+    | 4    | 2     |
+
+    
+Scenario Outline: name is ${name.first} ${name.last} and age is ${age}
+  * match name.first == "#? _ == 'Bob' || _ == 'Nyan'"
+  * match name.last == "#? _ == 'Dylan' || _ == 'Cat'"
+  * match title == karate.scenario.name
+
+Examples:
+  | name!                               | age |
+  | { "first": "Bob", "last": "Dylan" } | 10  |
+  | { "first": "Nyan", "last": "Cat" }  | 5   |
+
+  
 
 
 
